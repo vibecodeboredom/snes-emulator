@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>SNES Emulator</title>
+  <meta name="description" content="SNES Emulator powered by Snes9x WebAssembly core" />
+  <meta property="og:title" content="SNES Emulator" />
+  <meta property="og:description" content="SNES Emulator powered by Snes9x WebAssembly core" />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="icon" href="data:," />
 </head>
@@ -33,7 +36,7 @@
         <input type="file" id="file-input" accept=".sfc,.smc,.fig,.swc,.zip" hidden />
       </div>
 
-      <div class="loading" id="loading" hidden>
+      <div class="loading" id="loading" hidden style="display: none;">
         <div class="spinner"></div>
         <p id="loading-text">Loading…</p>
       </div>
@@ -78,7 +81,7 @@
   </main>
 
   <!-- Touch overlay gamepad -->
-  <div class="touchpad" id="touchpad" hidden>
+  <div class="touchpad" id="touchpad" hidden style="display: none;">
     <div class="t-dpad">
       <button data-code="ArrowUp">▲</button>
       <button data-code="ArrowLeft">◀</button>

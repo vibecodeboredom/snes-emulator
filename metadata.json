@@ -1,0 +1,5 @@
+{
+  "name": "SNES Emulator",
+  "description": "SNES Emulator powered by Snes9x WebAssembly core",
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

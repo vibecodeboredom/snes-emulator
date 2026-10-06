@@ -49,7 +49,16 @@ function setStatus(msg, isError = false) {
 }
 
 function setLoading(show, text = 'Loading…') {
-  $('loading').hidden = !show;
+  const el = $('loading');
+  if (show) {
+    el.removeAttribute('hidden');
+    el.hidden = false;
+    el.style.display = 'flex';
+  } else {
+    el.setAttribute('hidden', '');
+    el.hidden = true;
+    el.style.display = 'none';
+  }
   $('loading-text').textContent = text;
 }
 
@@ -61,22 +70,33 @@ function setControlsEnabled(on) {
   document.querySelectorAll('.slot').forEach((b) => { b.disabled = !on; });
 }
 
-/** Origin Private File System root — persists per origin, no quota prompts. */
+/** Origin Private File System root — persists per origin, safely handles iframe restrictions. */
 async function opfsRoot() {
-  return await navigator.storage.getDirectory();
+  if (!navigator?.storage?.getDirectory) return null;
+  try {
+    return await navigator.storage.getDirectory();
+  } catch {
+    return null;
+  }
 }
 
 async function opfsWrite(name, data) {
-  const root = await opfsRoot();
-  const handle = await root.getFileHandle(name, { create: true });
-  const writable = await handle.createWritable();
-  await writable.write(data);
-  await writable.close();
+  try {
+    const root = await opfsRoot();
+    if (!root) return;
+    const handle = await root.getFileHandle(name, { create: true });
+    const writable = await handle.createWritable();
+    await writable.write(data);
+    await writable.close();
+  } catch {
+    // Best effort persistence
+  }
 }
 
 async function opfsRead(name) {
   try {
     const root = await opfsRoot();
+    if (!root) return null;
     const handle = await root.getFileHandle(name);
     const file = await handle.getFile();
     return new Uint8Array(await file.arrayBuffer());
@@ -88,6 +108,7 @@ async function opfsRead(name) {
 async function opfsDelete(name) {
   try {
     const root = await opfsRoot();
+    if (!root) return;
     await root.removeEntry(name);
   } catch { /* already gone */ }
 }
@@ -318,8 +339,17 @@ function wireTouchPad() {
   const toggle = $('btn-touch');
 
   toggle.addEventListener('click', () => {
-    const on = pad.hidden;
-    pad.hidden = !on;
+    const isHidden = pad.hasAttribute('hidden') || pad.hidden || pad.style.display === 'none';
+    if (isHidden) {
+      pad.removeAttribute('hidden');
+      pad.hidden = false;
+      pad.style.display = 'flex';
+    } else {
+      pad.setAttribute('hidden', '');
+      pad.hidden = true;
+      pad.style.display = 'none';
+    }
+    const on = !pad.hidden;
     toggle.textContent = `📱 Touch controls: ${on ? 'on' : 'off'}`;
     toggle.classList.toggle('active', on);
   });
@@ -346,6 +376,8 @@ function wireTouchPad() {
   wireUI();
   paintSlots();
 
+  setLoading(false);
+
   // If the player cached a cartridge last visit, boot straight into it.
   try {
     const bytes = await opfsRead(OPFS_ROM_NAME);
@@ -358,7 +390,11 @@ function wireTouchPad() {
       await bootCartridge(bytes, name);
       return;
     }
-  } catch { /* no cache — show the picker */ }
+  } catch (err) {
+    setLoading(false);
+    $('drop-hint').style.display = 'flex';
+  }
 
+  setLoading(false);
   setStatus('Ready. Load a ROM to play.');
 })();
