@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SNES Emulator</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="data:," />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🎮 SNES Emulator <span class="core-tag">Snes9x core</span></div>
+    <div class="toolbar">
+      <button id="btn-load" title="Load a cartridge">📂 Load ROM</button>
+      <button id="btn-pause" disabled title="Pause / resume">⏸ Pause</button>
+      <button id="btn-reset" disabled title="Reset the console">↺ Reset</button>
+      <button id="btn-mute" disabled title="Mute / unmute">🔊 Sound</button>
+      <button id="btn-shot" disabled title="Save a screenshot">📷 Shot</button>
+      <button id="btn-full" disabled title="Fullscreen">⛶ Full</button>
+    </div>
+  </header>
+
+  <main class="stage-wrap">
+    <div class="stage" id="stage">
+      <canvas id="screen" width="256" height="224"></canvas>
+
+      <!-- Shown before a cartridge is loaded -->
+      <div class="drop-hint" id="drop-hint">
+        <div class="cart">🕹️</div>
+        <h2>Drop a cartridge here</h2>
+        <p>.sfc / .smc / .fig / .swc — or a .zip containing one.<br />Your ROM never leaves this browser.</p>
+        <button id="btn-pick" class="big">Choose ROM file</button>
+        <input type="file" id="file-input" accept=".sfc,.smc,.fig,.swc,.zip" hidden />
+      </div>
+
+      <div class="loading" id="loading" hidden>
+        <div class="spinner"></div>
+        <p id="loading-text">Loading…</p>
+      </div>
+    </div>
+
+    <aside class="sidepanel">
+      <section class="card">
+        <h3>Cartridge</h3>
+        <div class="rom-name" id="rom-name">— no cartridge —</div>
+        <div class="row">
+          <button id="btn-forget" class="ghost" disabled>Forget cached ROM</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>Save states</h3>
+        <div class="slots">
+          <button class="slot" data-slot="1" disabled>1</button>
+          <button class="slot" data-slot="2" disabled>2</button>
+          <button class="slot" data-slot="3" disabled>3</button>
+        </div>
+        <div class="row">
+          <button id="btn-state-save" class="ghost" disabled>💾 Save</button>
+          <button id="btn-state-load" class="ghost" disabled>📥 Load</button>
+        </div>
+        <p class="hint">Pick a slot, then Save / Load. SRAM saves itself automatically.</p>
+      </section>
+
+      <section class="card">
+        <h3>Controls</h3>
+        <ul class="keys">
+          <li><kbd>←↑↓→</kbd> D-pad</li>
+          <li><kbd>Z</kbd> B &nbsp; <kbd>X</kbd> A</li>
+          <li><kbd>A</kbd> Y &nbsp; <kbd>S</kbd> X</li>
+          <li><kbd>Q</kbd>/<kbd>W</kbd> L/R</li>
+          <li><kbd>Enter</kbd> Start &nbsp; <kbd>Shift</kbd> Select</li>
+        </ul>
+        <p class="hint">Standard USB gamepads work too — just press a button.</p>
+        <button id="btn-touch" class="ghost">📱 Touch controls: off</button>
+      </section>
+    </aside>
+  </main>
+
+  <!-- Touch overlay gamepad -->
+  <div class="touchpad" id="touchpad" hidden>
+    <div class="t-dpad">
+      <button data-code="ArrowUp">▲</button>
+      <button data-code="ArrowLeft">◀</button>
+      <button data-code="ArrowRight">▶</button>
+      <button data-code="ArrowDown">▼</button>
+    </div>
+    <div class="t-btns">
+      <button data-code="KeyX">A</button>
+      <button data-code="KeyZ">B</button>
+      <button data-code="KeyS">X</button>
+      <button data-code="KeyA">Y</button>
+    </div>
+    <div class="t-sys">
+      <button data-code="ShiftRight">SELECT</button>
+      <button data-code="Enter">START</button>
+    </div>
+  </div>
+
+  <footer class="statusbar" id="status">Ready. Load a ROM to play.</footer>
+
+  <script src="./vendor/jszip.min.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

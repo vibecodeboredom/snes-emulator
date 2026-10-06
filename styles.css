@@ -1,0 +1,243 @@
+/* SNES Emulator — dark arcade theme */
+
+:root {
+  --bg: #0b0e14;
+  --panel: #141926;
+  --panel-2: #1b2334;
+  --line: #2a3350;
+  --text: #e8ecf4;
+  --muted: #8b94ad;
+  --accent: #7c5cff;
+  --accent-2: #00d4a4;
+  --danger: #ff5c7a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: radial-gradient(1200px 600px at 50% -10%, #1a2140 0%, var(--bg) 60%);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: rgba(11, 14, 20, 0.85);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.brand { font-weight: 700; font-size: 18px; }
+.core-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-2);
+  border: 1px solid var(--accent-2);
+  border-radius: 20px;
+  padding: 2px 8px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+
+button {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.05s, background 0.15s, border-color 0.15s;
+}
+button:hover:not(:disabled) { background: #232c46; border-color: var(--accent); }
+button:active:not(:disabled) { transform: scale(0.96); }
+button:disabled { opacity: 0.35; cursor: default; }
+button.ghost { background: transparent; }
+button.big {
+  font-size: 17px;
+  padding: 12px 26px;
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 700;
+}
+button.big:hover { background: #8f73ff; }
+button.active { border-color: var(--accent-2); color: var(--accent-2); }
+
+/* ---------- layout ---------- */
+.stage-wrap {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  background: #000;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  max-height: calc(100vh - 170px);
+  margin: 0 auto;
+  width: 100%;
+  max-width: 860px;
+}
+
+#screen {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  background: #000;
+}
+
+.drop-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 24px;
+  background: rgba(5, 7, 12, 0.92);
+}
+.drop-hint .cart { font-size: 64px; }
+.drop-hint h2 { margin: 0; }
+.drop-hint p { color: var(--muted); margin: 0 0 8px; line-height: 1.5; }
+.stage.dragging .drop-hint { outline: 3px dashed var(--accent-2); outline-offset: -12px; }
+
+.loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(5, 7, 12, 0.9);
+}
+.spinner {
+  width: 44px; height: 44px;
+  border: 4px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- side panel ---------- */
+.sidepanel {
+  flex: 0 0 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+.card h3 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.rom-name { font-size: 14px; word-break: break-all; margin-bottom: 10px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.hint { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 8px 0 0; }
+
+.slots { display: flex; gap: 8px; margin-bottom: 10px; }
+.slot {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 10px 0;
+}
+.slot.selected { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.slot.filled::after { content: " ●"; color: var(--accent-2); font-size: 12px; }
+
+.keys { list-style: none; margin: 0 0 10px; padding: 0; font-size: 13px; line-height: 2; }
+kbd {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 1px 7px;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+/* ---------- touch pad ---------- */
+.touchpad {
+  position: fixed;
+  inset: auto 0 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  pointer-events: none;
+  z-index: 50;
+}
+.touchpad > div { pointer-events: auto; }
+.t-dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-rows: repeat(3, 56px);
+  gap: 2px;
+}
+.t-dpad button:nth-child(1) { grid-column: 2; grid-row: 1; }
+.t-dpad button:nth-child(2) { grid-column: 1; grid-row: 2; }
+.t-dpad button:nth-child(3) { grid-column: 3; grid-row: 2; }
+.t-dpad button:nth-child(4) { grid-column: 2; grid-row: 3; }
+.t-btns { display: grid; grid-template-columns: repeat(2, 62px); gap: 10px; }
+.t-btns button {
+  width: 62px; height: 62px; border-radius: 50%;
+  font-weight: 700; font-size: 16px;
+  background: rgba(124, 92, 255, 0.25);
+  touch-action: none;
+  user-select: none; -webkit-user-select: none;
+}
+.t-dpad button {
+  border-radius: 12px;
+  background: rgba(20, 25, 38, 0.7);
+  touch-action: none;
+  user-select: none; -webkit-user-select: none;
+}
+.t-sys { position: absolute; left: 50%; transform: translateX(-50%); bottom: 18px; display: flex; gap: 10px; }
+.t-sys button { font-size: 11px; border-radius: 20px; background: rgba(20, 25, 38, 0.7); }
+
+/* ---------- status bar ---------- */
+.statusbar {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  background: rgba(11, 14, 20, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.statusbar.error { color: var(--danger); }
+
+@media (max-width: 860px) {
+  .stage-wrap { flex-direction: column; }
+  .sidepanel { flex: 1 1 auto; width: 100%; }
+  .stage { max-height: none; }
+}
