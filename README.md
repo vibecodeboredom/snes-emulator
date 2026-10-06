@@ -42,8 +42,12 @@ Then click **Choose ROM file** (or drag & drop) and pick a `.sfc` / `.smc` / `.f
 index.html          page shell
 app.js              UI + cartridge loading + save states (start here to hack)
 styles.css          theme
+tools/
+  fetch-core.sh     downloads the .wasm binary for fully-offline dev
 vendor/
-  snes9x/           Snes9x WASM core: snes9x.wasm + Emscripten loader + JS SDK
+  snes9x/           Snes9x core: Emscripten loader + JS SDK (the .wasm itself
+                    loads from the pinned npm CDN at runtime, or from a local
+                    copy placed next to snes9x.js — see tools/fetch-core.sh)
   jszip.min.js      zip support for ROM loading (MIT)
 LICENSE-SNES9X.txt  the core's license — keep this file with any distribution
 ```

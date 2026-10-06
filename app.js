@@ -19,6 +19,20 @@ const ROM_EXTS = ['.sfc', '.smc', '.fig', '.swc'];
 const OPFS_ROM_NAME = 'cached-cartridge.bin';
 const OPFS_ROM_META = 'cached-cartridge.json';
 
+// The .wasm binary is the one file this repo loads remotely: it is fetched
+// from the official npm CDN (pinned version, hash-verified at publish time).
+// Drop a local copy next to snes9x.js (see tools/fetch-core.sh) and it is
+// used instead — handy for offline dev.
+const CDN_WASM_URL = 'https://cdn.jsdelivr.net/npm/@wasm-gaming/snes9x-wasm@0.1.1/dist/snes9x/snes9x.wasm';
+
+async function resolveWasmUrl() {
+  try {
+    const r = await fetch('./vendor/snes9x/snes9x.wasm', { method: 'HEAD' });
+    if (r.ok) return './vendor/snes9x/snes9x.wasm';
+  } catch { /* not vendored — fall through to CDN */ }
+  return CDN_WASM_URL;
+}
+
 // ---------------------------------------------------------------- state
 let engine = null;
 let romName = '';
@@ -115,6 +129,7 @@ async function bootCartridge(bytes, name) {
     engine = await load({
       canvasEl: $('screen'),
       assets: { rom: bytes },
+      wasmUrl: await resolveWasmUrl(),
       options: { region: 'auto', aspect: '4:3', cropOverscan: true },
       persist: 'opfs',               // auto-persist battery SRAM every 15 s
       storageNamespace: 'snes-emu',
